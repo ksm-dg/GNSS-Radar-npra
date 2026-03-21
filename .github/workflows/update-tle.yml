@@ -1,0 +1,32 @@
+name: Update TLE Data
+on:
+  schedule:
+    - cron: '30 2 * * *' # 2:30 AM daily
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch TLEs from CelesTrak
+        run: |
+          mkdir -p tle
+          # CelesTrak GP API URLs
+          BASE="https://celestrak.org/NORAD/elements/gp.php?FORMAT=tle&GROUP"
+          curl -s "${BASE}=gps-ops" -o tle/gps.txt
+          curl -s "${BASE}=glo-ops" -o tle/glo.txt
+          curl -s "${BASE}=galileo" -o tle/gal.txt
+          curl -s "${BASE}=beidou" -o tle/bds.txt
+          curl -s "${BASE}=qzss" -o tle/qzs.txt
+          curl -s "${BASE}=sbas" -o tle/sbs.txt
+
+      - name: Commit Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add tle/*.txt
+          git commit -m "Automated TLE update $(date -u)" || exit 0
+          git push
