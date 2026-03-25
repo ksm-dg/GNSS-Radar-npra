@@ -108,6 +108,17 @@
         var D2R = Math.PI / 180;
         var R2D = 180 / Math.PI;
 
+        // Disable Highcharts module loading to prevent CDN 403 errors
+        Highcharts.wrap(Highcharts, 'ajax', function(proceed, args) {
+            // Don't load modules from CDN
+            if (args && args.url && (args.url.indexOf('code.highcharts.com') > -1 || args.url.indexOf('modules') > -1)) {
+                console.log('Skipping CDN module load:', args.url);
+                if (args.success) args.success({});
+                return;
+            }
+            return proceed(args);
+        });
+
         // Configure Highcharts to prevent CDN module loading issues
         Highcharts.setOptions({
             exporting: {
@@ -833,15 +844,7 @@
                 console.log('Creating NSAT chart with plotdata:', plotdata);
                 nsatchart = new Highcharts.Chart(plotdata);
                 console.log('nsatchart created:', nsatchart);
-                console.log('nsatchart.renderTo:', nsatchart.renderTo);
-                console.log('nsatchart container HTML length (before reflow):', document.getElementById("nsatchart").innerHTML.length);
-                
-                // Force reflow/redraw
-                if (nsatchart.reflow) nsatchart.reflow();
-                if (nsatchart.redraw) nsatchart.redraw();
-                
-                console.log('nsatchart container HTML length (after reflow):', document.getElementById("nsatchart").innerHTML.length);
-                console.log('nsatchart container:', document.getElementById("nsatchart"));
+                console.log('nsatchart container HTML length:', document.getElementById("nsatchart").innerHTML.length);
             } catch (e) {
                 console.error('Error creating NSAT chart:', e);
             }
@@ -1053,15 +1056,7 @@
             try {
                 skychart = new Highcharts.Chart(plotdata);
                 console.log('skychart created:', skychart);
-                console.log('skychart.renderTo:', skychart.renderTo);
-                console.log('skychart container HTML length (before reflow):', document.getElementById("skychart").innerHTML.length);
-                
-                // Force reflow/redraw
-                if (skychart.reflow) skychart.reflow();
-                if (skychart.redraw) skychart.redraw();
-                
-                console.log('skychart container HTML length (after reflow):', document.getElementById("skychart").innerHTML.length);
-                console.log('skychart container:', document.getElementById("skychart"));
+                console.log('skychart container HTML length:', document.getElementById("skychart").innerHTML.length);
             } catch (e) {
                 console.error('Error creating sky chart:', e);
             }
