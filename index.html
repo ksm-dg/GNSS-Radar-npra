@@ -284,9 +284,12 @@
             run_set_sat_gmap(tind); // set satellites on gmap
             run_visible_sat_gmap(); // visible satellites on gmap
             run_gen_skyplotdata(tind); // generate plot data
+            run_gen_nsatplotdata(); // generate plot data for nsat chart
+            dop = compute_dop(tind); // compute dop
             
             console.log('skyplts:', skyplts);
             console.log('nsatplts:', nsatplts);
+            console.log('dop:', dop);
 
             // draw chart
             try {
@@ -300,12 +303,6 @@
                 console.log('NSAT chart drawn successfully');
             } catch (e) {
                 console.error('Error drawing NSAT chart:', e);
-            }
-            try {
-                nsatchartdraw(nsatplts, times, orgllh, elemask);
-                console.log('NSAT chart drawn successfully');
-            } catch (e) {
-                console.error('Error drawing nsat chart:', e);
             }
 
             // add marker drag and drop event
