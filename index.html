@@ -480,6 +480,12 @@
         // set satellite marker on gmap
         function set_sat_gmap(llhs, tles, markers, prnoffset) {
             for (var i = 0; i < tles.length; i++) {
+                // create marker if it doesn't exist
+                if (!markers[i]) {
+                    var latlon = new google.maps.LatLng(0.0, 0.0);
+                    markers[i] = new google.maps.Marker({ position: latlon, map: map, icon: icon });
+                    markers[i].setMap(map);
+                }
                 markers[i].exist = false;
                 if (tles[i]) {
                     _set_sat_gmap(llhs[i]["latitude"] * R2D, llhs[i]["longitude"] * R2D, tles[i]["name"], i + prnoffset, markers[i]);
