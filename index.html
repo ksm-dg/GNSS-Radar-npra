@@ -124,6 +124,7 @@
 
         // parse TLE
         var tles = parse_tle(tledl);
+        console.log('Parsed TLEs count:', Object.keys(tles).length);
             
         // sort TLE
         for (var i = 0; i < nsats; i++) {
@@ -155,6 +156,8 @@
                 }
             }
         }
+        
+        console.log('TLE arrays loaded - GPS:', gpstles.length, 'GLO:', glotles.length, 'GAL:', galtles.length, 'BDS:', bdstles.length, 'QZSS:', qzstles.length, 'SBAS:', sbstles.length);
 
         // add initialize event
         google.maps.event.addDomListener(window, 'load', initialize);
@@ -281,17 +284,26 @@
             run_set_sat_gmap(tind); // set satellites on gmap
             run_visible_sat_gmap(); // visible satellites on gmap
             run_gen_skyplotdata(tind); // generate plot data
-            run_gen_nsatplotdata();
-            dop = compute_dop(tind); // compute dop
+            
+            console.log('skyplts:', skyplts);
+            console.log('nsatplts:', nsatplts);
 
             // draw chart
             try {
                 skychartdraw(skyplts);
+                console.log('Sky chart drawn successfully');
             } catch (e) {
                 console.error('Error drawing sky chart:', e);
             }
             try {
                 nsatchartdraw(nsatplts, times, orgllh, elemask);
+                console.log('NSAT chart drawn successfully');
+            } catch (e) {
+                console.error('Error drawing NSAT chart:', e);
+            }
+            try {
+                nsatchartdraw(nsatplts, times, orgllh, elemask);
+                console.log('NSAT chart drawn successfully');
             } catch (e) {
                 console.error('Error drawing nsat chart:', e);
             }
