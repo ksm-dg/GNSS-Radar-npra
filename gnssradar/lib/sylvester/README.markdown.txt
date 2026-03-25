@@ -1,6 +1,6 @@
 # Sylvester
 
-Vector and Matrix math for JavaScript. [See the website](http://sylvester.jcoglan.com)
+Vector and Matrix math for JavaScript. [See the website](https://sylvester.jcoglan.com)
 for documentation.
 
 

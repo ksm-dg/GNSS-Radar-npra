@@ -2835,7 +2835,7 @@ satellite.sgp4 = function (satrec, tsince) {
 
 function eci_to_geodetic (eci_coords, gmst) {
     'use strict';
-    // http://www.celestrak.com/columns/v02n03/
+    // https://www.celestrak.com/columns/v02n03/
     var a   = 6378.137;
     var b   = 6356.7523142;
     var R   = Math.sqrt( (eci_coords["x"]*eci_coords["x"]) + (eci_coords["y"]*eci_coords["y"]) );
@@ -2909,7 +2909,7 @@ function geodetic_to_ecf (geodetic_coords){
 }
 
 function topocentric (observer_coords, satellite_coords){
-    // http://www.celestrak.com/columns/v02n02/
+    // https://www.celestrak.com/columns/v02n02/
     // TS Kelso's method, except I'm using ECF frame
     // and he uses ECI.
     //

@@ -26,25 +26,25 @@ Provides the functions necessary for SGP4/SDP4 calculations, as callable javascr
 The internals of this library are nearly identical to [Brandon Rhode's sgp4 python library](https://pypi.python.org/pypi/sgp4/). However, it is encapsulated in a standard JS library (self executing function), and exposes only the functionality needed to track satellites and propagate paths. The only changes I made to Brandon Rhode's code was to change the positional parameters of functions to key:value objects. This reduces the complexity of functions that require 50+ parameters, and doesn't require the parameters to be placed in the exact order.
 
 **Start Here:**
-* [TS Kelso's Columns for Satellite Times](http://celestrak.com/columns/), Orbital Propagation Parts I and II a must!
-* [Wikipedia: Simplified Perturbations Model](http://en.wikipedia.org/wiki/Simplified_perturbations_models)
-* [SpaceTrack Report #3, by Hoots and Roehrich](http://celestrak.com/NORAD/documentation/spacetrk.pdf).
+* [TS Kelso's Columns for Satellite Times](https://celestrak.com/columns/), Orbital Propagation Parts I and II a must!
+* [Wikipedia: Simplified Perturbations Model](https://en.wikipedia.org/wiki/Simplified_perturbations_models)
+* [SpaceTrack Report #3, by Hoots and Roehrich](https://celestrak.com/NORAD/documentation/spacetrk.pdf).
 
 The javascript in this library is heavily based (straight copied) from:
 *   The python [sgp4 1.1 by Brandon Rhodes](https://pypi.python.org/pypi/sgp4/)
-*   The C++ code by [David Vallado, et al](http://www.celestrak.com/publications/AIAA/2006-6753/)
+*   The C++ code by [David Vallado, et al](https://www.celestrak.com/publications/AIAA/2006-6753/)
 
 I've included the original PKG-INFO file from the python library.
 
 The coordinate transforms are based off T.S. Kelso's columns:
-*   [Part I](http://celestrak.com/columns/v02n01/)
-*   [Part II](http://celestrak.com/columns/v02n02/)
-*   [Part III](http://celestrak.com/columns/v02n03/)
+*   [Part I](https://celestrak.com/columns/v02n01/)
+*   [Part II](https://celestrak.com/columns/v02n02/)
+*   [Part III](https://celestrak.com/columns/v02n03/)
 
 And the coursework for UC Boulder's ASEN students
-*   [Coodinate Transforms @ UC Boulder](http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc)
+*   [Coodinate Transforms @ UC Boulder](https://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc)
 
-I would recommend anybody interested in satellite tracking or orbital propagation to read [all of TS Kelso's columns](http://celestrak.com/columns/). Without his work, this project would not be possible.
+I would recommend anybody interested in satellite tracking or orbital propagation to read [all of TS Kelso's columns](https://celestrak.com/columns/). Without his work, this project would not be possible.
 
 Get a free [Space Track account](https://www.space-track.org/auth/login) and download your own up to date TLEs for use with this library.
 
@@ -252,12 +252,12 @@ var gmst = satellite.gstime_from_date (now.getUTCFullYear(),
 ####Transforms
 Most of these are self explanatory from their names. Coords are arrays of three floats EX: [1.1, 1.2, 1.3] in kilometers. Once again, read the following first:
 The coordinate transforms are based off T.S. Kelso's columns:
-*   [Part I](http://celestrak.com/columns/v02n01/)
-*   [Part II](http://celestrak.com/columns/v02n02/)
-*   [Part III](http://celestrak.com/columns/v02n03/)
+*   [Part I](https://celestrak.com/columns/v02n01/)
+*   [Part II](https://celestrak.com/columns/v02n02/)
+*   [Part III](https://celestrak.com/columns/v02n03/)
 
 And the coursework for UC Boulder's ASEN students
-*   [Coodinate Transforms @ UC Boulder](http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc)
+*   [Coodinate Transforms @ UC Boulder](https://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc)
 
 These four are used to convert between ECI, ECF, and Geodetic, as you need them. ECI and ECF coordinates are in km or km/s. Geodetic coords are in radians.
 ```javascript
@@ -297,7 +297,7 @@ I took advantage of the fact that Python and JavaScript are nearly semantically 
 
 Testing
 -------
-I've included a small testing app, that provides some benchmarking tools and verifies SGP4 and SDP4 using the Test Criteria provided by SpaceTrack Report #3, and is based off [System Benchmarking](http://celestrak.com/columns/v02n04/) by TS Kelso.
+I've included a small testing app, that provides some benchmarking tools and verifies SGP4 and SDP4 using the Test Criteria provided by SpaceTrack Report #3, and is based off [System Benchmarking](https://celestrak.com/columns/v02n04/) by TS Kelso.
 
 The testing app is a Chrome Packaged App that uses the angular.js framework.
 

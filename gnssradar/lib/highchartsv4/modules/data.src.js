@@ -11,7 +11,7 @@
  * CSV, HTML tables or grid views into basic configuration options for use 
  * directly in the Highcharts constructor.
  *
- * Demo: http://jsfiddle.net/highcharts/SnLFj/
+ * Demo: https://jsfiddle.net/highcharts/SnLFj/
  *
  * --- OPTIONS ---
  *
