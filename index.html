@@ -522,10 +522,12 @@
             var plt = [];
             for (var j = 0; j < ntimes; j++) {
                 var nsat = 0;
-                for (var i = 0; i < azels[j].length; i++) {
-                    if (azels[j][i]) {
-                        if (azels[j][i]["elevation"] > elemask) {
-                            nsat++;
+                if (azels[j]) {
+                    for (var i = 0; i < azels[j].length; i++) {
+                        if (azels[j][i]) {
+                            if (azels[j][i]["elevation"] > elemask) {
+                                nsat++;
+                            }
                         }
                     }
                 }
@@ -774,9 +776,14 @@
             // chart generation
             nsatchart = new Highcharts.Chart(plotdata);
 
-
-            for (var i = 0; i < 6; i++)
-                nsatchart.series[i].data[tind].update({ color: coldark[i] }, true, false);
+            // update initial selected time point color
+            if (nsatchart.series && nsatchart.series.length > 0) {
+                for (var i = 0; i < 6; i++) {
+                    if (nsatchart.series[i] && nsatchart.series[i].data && nsatchart.series[i].data[tind]) {
+                        nsatchart.series[i].data[tind].update({ color: coldark[i] }, true, false);
+                    }
+                }
+            }
         }
 
         // sky chart setting
