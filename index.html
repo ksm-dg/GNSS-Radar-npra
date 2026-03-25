@@ -291,8 +291,16 @@
             dop = compute_dop(tind); // compute dop
 
             // draw chart
-            skychartdraw(skyplts);
-            nsatchartdraw(nsatplts, times, orgllh, elemask);
+            try {
+                skychartdraw(skyplts);
+            } catch (e) {
+                console.error('Error drawing sky chart:', e);
+            }
+            try {
+                nsatchartdraw(nsatplts, times, orgllh, elemask);
+            } catch (e) {
+                console.error('Error drawing nsat chart:', e);
+            }
 
             // add marker drag and drop event
             google.maps.event.addListener(orgmarker, 'dragend', function (ev) {
@@ -703,10 +711,7 @@
                     }
                 },
                 exporting: {
-                    scale: 1,
-                    sourceHeight: 400,
-                    sourceWidth: 800,
-                    filename: 'nsat'
+                    enabled: false
                 },
                 plotOptions: {
                     column: {
@@ -845,10 +850,7 @@
                     labels: { enabled: false }
                 },
                 exporting: {
-                    scale: 1,
-                    sourceHeight: 800,
-                    sourceWidth: 600,
-                    filename: 'skyplot'
+                    enabled: false
                 },
                 plotOptions: {
                     bubble: {
