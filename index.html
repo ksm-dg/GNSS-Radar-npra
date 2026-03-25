@@ -101,7 +101,7 @@
         var bdstles = [];
         var sbstles = [];
         var iconqz, icongps, icongal, iconglo, iconbds, iconsbs, icon;
-        var visstate = { "GPS": true, "GLONASS": true, "Galileo": true, "BeiDou": true, "QZSS": true, "SBAS": true };
+        var visstate = { "GPS": true, "GLONASS": true, "Galileo": true, "BeiDou": true, "QZSS": false, "SBAS": true };
         var skyplts = {};
         var nsatplts = {};
         var skychart,nsatchart;
@@ -158,7 +158,7 @@
         loadTLEs("sbs.txt", "SBAS");
         loadTLEs("glo.txt", "GLONASS");
         loadTLEs("gal.txt", "Galileo");
-        loadTLEs("qzs.txt", "QZSS");
+        // loadTLEs("qzs.txt", "QZSS");
         loadTLEs("bds.txt", "BeiDou");
 
         // add initialize event
@@ -200,75 +200,74 @@
                 streetViewControl: false,
                 mapTypeId: google.maps.MapTypeId.SATELLITE
             };
-            map = new google.maps.Map(document.getElementById('map'), myOptions);
+            
+            try {
+                map = new google.maps.Map(document.getElementById('map'), myOptions);
+            } catch (e) {
+                console.error('Error initializing Google Maps:', e);
+                // Continue without map - charts will still work
+            }
+            
+            if (!map) {
+                console.warn('Google Maps not available - proceeding with charts only');
+            }
 
             // Load satellite icons
-            iconqzs = new google.maps.MarkerImage('./gnssradar/icon/QZSS.png',
-                new google.maps.Size(100, 68),
-                new google.maps.Point(0,0),
-                new google.maps.Point(40, 25));
-            icongps = new google.maps.MarkerImage('./gnssradar/icon/GPS.png',
-                new google.maps.Size(100, 73),
-                new google.maps.Point(0,0),
-                new google.maps.Point(50, 41));
-            iconglo = new google.maps.MarkerImage('./gnssradar/icon/GLONASS.png',
-                new google.maps.Size(90, 49),
-                new google.maps.Point(0, 0),
-                new google.maps.Point(39, 26));
-            icongal = new google.maps.MarkerImage('./gnssradar/icon/GALILEO.png',
-                new google.maps.Size(110, 55),
-                new google.maps.Point(0, 0),
-                new google.maps.Point(71, 34));
-            iconbds = new google.maps.MarkerImage('./gnssradar/icon/BeiDou.png',
-                new google.maps.Size(100, 85),
-                new google.maps.Point(0, 0),
-                new google.maps.Point(45, 48));
-            iconsbs = new google.maps.MarkerImage('./gnssradar/icon/SBAS.png',
-                new google.maps.Size(100, 70),
-                new google.maps.Point(0, 0),
-                new google.maps.Point(47, 37));
-            icon = new google.maps.MarkerImage('./gnssradar/icon/transparence.png',
-                new google.maps.Size(3, 3),
-                new google.maps.Point(0, 0),
-                new google.maps.Point(1, 1));
+            try {
+                iconqzs = new google.maps.MarkerImage('./gnssradar/icon/QZSS.png',
+                    new google.maps.Size(100, 68),
+                    new google.maps.Point(0,0),
+                    new google.maps.Point(40, 25));
+                icongps = new google.maps.MarkerImage('./gnssradar/icon/GPS.png',
+                    new google.maps.Size(100, 73),
+                    new google.maps.Point(0,0),
+                    new google.maps.Point(50, 41));
+                iconglo = new google.maps.MarkerImage('./gnssradar/icon/GLONASS.png',
+                    new google.maps.Size(90, 49),
+                    new google.maps.Point(0, 0),
+                    new google.maps.Point(39, 26));
+                icongal = new google.maps.MarkerImage('./gnssradar/icon/GALILEO.png',
+                    new google.maps.Size(110, 55),
+                    new google.maps.Point(0, 0),
+                    new google.maps.Point(71, 34));
+                iconbds = new google.maps.MarkerImage('./gnssradar/icon/BeiDou.png',
+                    new google.maps.Size(100, 85),
+                    new google.maps.Point(0, 0),
+                    new google.maps.Point(45, 48));
+                iconsbs = new google.maps.MarkerImage('./gnssradar/icon/SBAS.png',
+                    new google.maps.Size(100, 70),
+                    new google.maps.Point(0, 0),
+                    new google.maps.Point(47, 37));
+                icon = new google.maps.MarkerImage('./gnssradar/icon/transparence.png',
+                    new google.maps.Size(3, 3),
+                    new google.maps.Point(0, 0),
+                    new google.maps.Point(1, 1));
+            } catch (e) {
+                console.error('Error loading marker icons:', e);
+            }
 
-            // Display satellite icons at default position
-            var latlon = new google.maps.LatLng(0.0,0.0);
-            for (var i = 0; i < 32; i++) {
-                gpsmarkers[i] = new google.maps.Marker({ position: latlon, map: map, icon: icon });
-                gpsmarkers[i].setMap(map);
-            }
-            for (var i = 0; i < 7; i++) {
-                qzsmarkers[i] = new google.maps.Marker({ position: latlon, map: map, icon: icon });
-                qzsmarkers[i].setMap(map);
-            }
-            for (var i = 0; i < 24; i++) {
-                glomarkers[i] = new google.maps.Marker({ position: latlon, map: map, icon: icon });
-                glomarkers[i].setMap(map);
-            }
-            for (var i = 0; i < 27; i++) {
-                galmarkers[i] = new google.maps.Marker({ position: latlon, map: map, icon: icon });
-                galmarkers[i].setMap(map);
-            }
-            for (var i = 0; i < 35; i++) {
-                bdsmarkers[i] = new google.maps.Marker({ position: latlon, map: map, icon: icon });
-                bdsmarkers[i].setMap(map);
-            }
-            for (var i = 0; i < 23; i++) {
-                sbsmarkers[i] = new google.maps.Marker({ position: latlon, map: map, icon: icon });
-                sbsmarkers[i].setMap(map);
+            // Display satellite markers if map is available
+            if (map) {
+                var latlon = new google.maps.LatLng(0.0,0.0);
+                // Note: Pre-initialization removed - using dynamic marker creation instead
             }
 
             // original position
-            var latlon = new google.maps.LatLng(orglat, orglon);
-            orgmarker = new google.maps.Marker({
-                position: latlon, map: map,
-                icon: "./gnssradar/icon/rangerstation.png",
-                shadow: "./gnssradar/icon/rangerstation.shadow.png",
-                draggable: true
-            });
-            var title = "Observer (Drag and drop me!)\nLat:" + orglat + "\nLon:" + orglon;
-            orgmarker.setTitle(title);
+            if (map) {
+                try {
+                    var latlon = new google.maps.LatLng(orglat, orglon);
+                    orgmarker = new google.maps.Marker({
+                        position: latlon, map: map,
+                        icon: "./gnssradar/icon/rangerstation.png",
+                        shadow: "./gnssradar/icon/rangerstation.shadow.png",
+                        draggable: true
+                    });
+                    var title = "Observer (Drag and drop me!)\nLat:" + orglat + "\nLon:" + orglon;
+                    orgmarker.setTitle(title);
+                } catch (e) {
+                    console.error('Error creating observer marker:', e);
+                }
+            }
 
             // get current time
             var time = new Date();
@@ -303,31 +302,37 @@
             }
 
             // add marker drag and drop event
-            google.maps.event.addListener(orgmarker, 'dragend', function (ev) {
-                // get new location
-                orglat = ev.latLng.lat();
-                orglon = ev.latLng.lng();
-                orgllh = {
-                    "latitude": orglat * D2R,
-                    "longitude": orglon * D2R,
-                    "height": 0
-                }
-                var title = "Observer (Drag and drop me!)\nLat:" + orglat + "\nLon:" + orglon;
-                orgmarker.setTitle(title);
+            if (map && orgmarker) {
+                try {
+                    google.maps.event.addListener(orgmarker, 'dragend', function (ev) {
+                        // get new location
+                        orglat = ev.latLng.lat();
+                        orglon = ev.latLng.lng();
+                        orgllh = {
+                            "latitude": orglat * D2R,
+                            "longitude": orglon * D2R,
+                            "height": 0
+                        }
+                        var title = "Observer (Drag and drop me!)\nLat:" + orglat + "\nLon:" + orglon;
+                        orgmarker.setTitle(title);
 
-                map.panTo(ev.latLng); // pan to new location
-                
-                for (var i = 0; i < ntimes; i++) {
-                    run_compute_satazel(i); // re-compute azels
-                }
-                run_gen_skyplotdata(tind); // re-generate plot data
-                run_gen_nsatplotdata();
-                dop = compute_dop(tind); // re-compute dop
+                        map.panTo(ev.latLng); // pan to new location
+                        
+                        for (var i = 0; i < ntimes; i++) {
+                            run_compute_satazel(i); // re-compute azels
+                        }
+                        run_gen_skyplotdata(tind); // re-generate plot data
+                        run_gen_nsatplotdata();
+                        dop = compute_dop(tind); // re-compute dop
 
-                // draw chart
-                skychartdraw(skyplts);
-                nsatchartdraw(nsatplts, times, orgllh, elemask);
-            });
+                        // draw chart
+                        skychartdraw(skyplts);
+                        nsatchartdraw(nsatplts, times, orgllh, elemask);
+                    });
+                } catch (e) {
+                    console.error('Error adding marker drag event:', e);
+                }
+            }
         }
 
         // run compute_satllh(ind)
@@ -487,12 +492,19 @@
 
         // set satellite marker on gmap
         function set_sat_gmap(llhs, tles, markers, prnoffset) {
+            if (!map) return markers; // skip if map not available
+            
             for (var i = 0; i < tles.length; i++) {
                 // create marker if it doesn't exist
                 if (!markers[i]) {
-                    var latlon = new google.maps.LatLng(0.0, 0.0);
-                    markers[i] = new google.maps.Marker({ position: latlon, map: map, icon: icon });
-                    markers[i].setMap(map);
+                    try {
+                        var latlon = new google.maps.LatLng(0.0, 0.0);
+                        markers[i] = new google.maps.Marker({ position: latlon, map: map, icon: icon });
+                        markers[i].setMap(map);
+                    } catch (e) {
+                        console.error('Error creating marker:', e);
+                        continue;
+                    }
                 }
                 markers[i].exist = false;
                 if (tles[i]) {
