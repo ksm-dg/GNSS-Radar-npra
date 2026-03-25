@@ -734,15 +734,27 @@
                         point: {
                             events: {
                                 click: function () {
-                                    for (var i = 0; i < 6; i++) {
-                                        nsatchart.series[i].data[tind].update({ color: col[i] }, true, false);
-                                        nsatchart.series[i].data[this.x].update({ color: coldark[i] }, true, false);
+                                    try {
+                                        if (nsatchart && nsatchart.series) {
+                                            for (var i = 0; i < 6; i++) {
+                                                if (nsatchart.series[i] && nsatchart.series[i].data) {
+                                                    if (nsatchart.series[i].data[tind]) {
+                                                        nsatchart.series[i].data[tind].update({ color: col[i] }, true, false);
+                                                    }
+                                                    if (nsatchart.series[i].data[this.x]) {
+                                                        nsatchart.series[i].data[this.x].update({ color: coldark[i] }, true, false);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        tind = this.x;
+                                        run_set_sat_gmap(tind); // set satellites on gmap
+                                        run_gen_skyplotdata(tind); // generate plot data
+                                        dop = compute_dop(tind); // compute dop
+                                        skychartdraw(skyplts);
+                                    } catch (e) {
+                                        console.error('Error in nsatchart click event:', e);
                                     }
-                                    tind = this.x;
-                                    run_set_sat_gmap(tind); // set satellites on gmap
-                                    run_gen_skyplotdata(tind); // generate plot data
-                                    dop = compute_dop(tind); // compute dop
-                                    skychartdraw(skyplts);
                                 }
                             }
                         }
@@ -884,26 +896,42 @@
                         },
                         events: {
                             show: function () {
-                                var name = this.name.split("(");
-                                visible_sat_gmap(1, name[0]);
-                                visstate[name[0]] = true;
-                                dop = compute_dop(tind); // re-compute dop
-                                var sp = nsatchart.options.subtitle["text"].split("<br>");
-                                var newtext = sp[0] + "<br>" + "Mask:" + elemask.toString() + " deg" +
-                                     ", HDOP:" + dop["hdop"].toFixed(1) + ", PDOP:" + dop["pdop"].toFixed(1);
-                                nsatchart.setTitle(this.title, { text: newtext });
-                                nsatchart.series[this.index].show();
+                                try {
+                                    var name = this.name.split("(");
+                                    visible_sat_gmap(1, name[0]);
+                                    visstate[name[0]] = true;
+                                    dop = compute_dop(tind); // re-compute dop
+                                    if (nsatchart) {
+                                        var sp = nsatchart.options.subtitle["text"].split("<br>");
+                                        var newtext = sp[0] + "<br>" + "Mask:" + elemask.toString() + " deg" +
+                                             ", HDOP:" + dop["hdop"].toFixed(1) + ", PDOP:" + dop["pdop"].toFixed(1);
+                                        nsatchart.setTitle(this.title, { text: newtext });
+                                        if (nsatchart.series[this.index]) {
+                                            nsatchart.series[this.index].show();
+                                        }
+                                    }
+                                } catch (e) {
+                                    console.error('Error in skychart show event:', e);
+                                }
                             },
                             hide: function () {
-                                var name = this.name.split("(");
-                                visible_sat_gmap(0, name[0]);
-                                visstate[name[0]] = false;
-                                dop = compute_dop(tind); // re-compute dop
-                                var sp = nsatchart.options.subtitle["text"].split("<br>");
-                                var newtext = sp[0] + "<br>" + "Mask:" + elemask.toString() + " deg" +
-                                     ", HDOP:" + dop["hdop"].toFixed(1) + ", PDOP:" + dop["pdop"].toFixed(1);
-                                nsatchart.setTitle(this.title, { text: newtext });
-                                nsatchart.series[this.index].hide();
+                                try {
+                                    var name = this.name.split("(");
+                                    visible_sat_gmap(0, name[0]);
+                                    visstate[name[0]] = false;
+                                    dop = compute_dop(tind); // re-compute dop
+                                    if (nsatchart) {
+                                        var sp = nsatchart.options.subtitle["text"].split("<br>");
+                                        var newtext = sp[0] + "<br>" + "Mask:" + elemask.toString() + " deg" +
+                                             ", HDOP:" + dop["hdop"].toFixed(1) + ", PDOP:" + dop["pdop"].toFixed(1);
+                                        nsatchart.setTitle(this.title, { text: newtext });
+                                        if (nsatchart.series[this.index]) {
+                                            nsatchart.series[this.index].hide();
+                                        }
+                                    }
+                                } catch (e) {
+                                    console.error('Error in skychart hide event:', e);
+                                }
                             }
                         }
                     }
@@ -942,35 +970,36 @@
                 ]
             } // plotdata
 
-            var gps = skyplts["gps"];
-            var glo = skyplts["glo"];
-            var gal = skyplts["gal"];
-            var bds = skyplts["bds"];
-            var qzs = skyplts["qzs"];
-            var sbs = skyplts["sbs"];
+            var gps = skyplts["gps"] || [];
+            var glo = skyplts["glo"] || [];
+            var gal = skyplts["gal"] || [];
+            var bds = skyplts["bds"] || [];
+            var qzs = skyplts["qzs"] || [];
+            var sbs = skyplts["sbs"] || [];
 
             // set plot data
             plotdata["series"][0]["data"] = gps;
-            plotdata["series"][1]["data"] = glo;
-            plotdata["series"][2]["data"] = gal;
-            plotdata["series"][3]["data"] = bds;
-            plotdata["series"][4]["data"] = qzs;
-            plotdata["series"][5]["data"] = sbs;
-
-            // set legend name
             plotdata["series"][0]["name"] = "GPS(" + gps.length.toString() + ")";
-            plotdata["series"][1]["name"] = "GLONASS(" + glo.length.toString() + ")";
-            plotdata["series"][2]["name"] = "Galileo(" + gal.length.toString() + ")";
-            plotdata["series"][3]["name"] = "BeiDou(" + bds.length.toString() + ")";
-            plotdata["series"][4]["name"] = "QZSS(" + qzs.length.toString() + ")";
-            plotdata["series"][5]["name"] = "SBAS(" + sbs.length.toString() + ")";
-
-            // set initial visible state
             plotdata["series"][0]["visible"] = visstate["GPS"];
+            
+            plotdata["series"][1]["data"] = glo;
+            plotdata["series"][1]["name"] = "GLONASS(" + glo.length.toString() + ")";
             plotdata["series"][1]["visible"] = visstate["GLONASS"];
+            
+            plotdata["series"][2]["data"] = gal;
+            plotdata["series"][2]["name"] = "Galileo(" + gal.length.toString() + ")";
             plotdata["series"][2]["visible"] = visstate["Galileo"];
+            
+            plotdata["series"][3]["data"] = bds;
+            plotdata["series"][3]["name"] = "BeiDou(" + bds.length.toString() + ")";
             plotdata["series"][3]["visible"] = visstate["BeiDou"];
+            
+            plotdata["series"][4]["data"] = qzs;
+            plotdata["series"][4]["name"] = "QZSS(" + qzs.length.toString() + ")";
             plotdata["series"][4]["visible"] = visstate["QZSS"];
+            
+            plotdata["series"][5]["data"] = sbs;
+            plotdata["series"][5]["name"] = "SBAS(" + sbs.length.toString() + ")";
             plotdata["series"][5]["visible"] = visstate["SBAS"];
 
             // set legend title
@@ -980,7 +1009,11 @@
                 '<span style="color: #666; font-weight: normal; font-size: 14px">click to hide</span>';
 
             // chart generation
-            skychart = new Highcharts.Chart(plotdata);
+            try {
+                skychart = new Highcharts.Chart(plotdata);
+            } catch (e) {
+                console.error('Error creating sky chart:', e);
+            }
         }
     </script>
 </body>
