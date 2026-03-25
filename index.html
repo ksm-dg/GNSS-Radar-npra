@@ -108,6 +108,19 @@
         var D2R = Math.PI / 180;
         var R2D = 180 / Math.PI;
 
+        // Configure Highcharts to prevent CDN module loading issues
+        Highcharts.setOptions({
+            exporting: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false,
+                    shadow: false
+                }
+            }
+        });
+
         // get TLE from celestrak.com
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.open("GET", "gnssradar/celestrak.txt", false);
@@ -165,6 +178,15 @@
         
         // initialization function
         function initialize() {
+            console.log('initialize() called');
+            console.log('skychart container exists:', !!document.getElementById("skychart"));
+            console.log('nsatchart container exists:', !!document.getElementById("nsatchart"));
+            
+            var skyContainer = document.getElementById("skychart");
+            var nsatContainer = document.getElementById("nsatchart");
+            if (skyContainer) console.log('skychart dimensions:', skyContainer.offsetWidth, 'x', skyContainer.offsetHeight);
+            if (nsatContainer) console.log('nsatchart dimensions:', nsatContainer.offsetWidth, 'x', nsatContainer.offsetHeight);
+            
             // get number of time intervals to display
             ntimes = getKey("ntimes", 24);
             if (ntimes>maxntimes) ntimes = maxntimes;
@@ -807,7 +829,22 @@
             plotdata["series"][5]["data"] = nsatplts["sbs"];
 
             // chart generation
-            nsatchart = new Highcharts.Chart(plotdata);
+            try {
+                console.log('Creating NSAT chart with plotdata:', plotdata);
+                nsatchart = new Highcharts.Chart(plotdata);
+                console.log('nsatchart created:', nsatchart);
+                console.log('nsatchart.renderTo:', nsatchart.renderTo);
+                console.log('nsatchart container HTML length (before reflow):', document.getElementById("nsatchart").innerHTML.length);
+                
+                // Force reflow/redraw
+                if (nsatchart.reflow) nsatchart.reflow();
+                if (nsatchart.redraw) nsatchart.redraw();
+                
+                console.log('nsatchart container HTML length (after reflow):', document.getElementById("nsatchart").innerHTML.length);
+                console.log('nsatchart container:', document.getElementById("nsatchart"));
+            } catch (e) {
+                console.error('Error creating NSAT chart:', e);
+            }
 
             // update initial selected time point color
             if (nsatchart.series && nsatchart.series.length > 0) {
@@ -1015,6 +1052,16 @@
             // chart generation
             try {
                 skychart = new Highcharts.Chart(plotdata);
+                console.log('skychart created:', skychart);
+                console.log('skychart.renderTo:', skychart.renderTo);
+                console.log('skychart container HTML length (before reflow):', document.getElementById("skychart").innerHTML.length);
+                
+                // Force reflow/redraw
+                if (skychart.reflow) skychart.reflow();
+                if (skychart.redraw) skychart.redraw();
+                
+                console.log('skychart container HTML length (after reflow):', document.getElementById("skychart").innerHTML.length);
+                console.log('skychart container:', document.getElementById("skychart"));
             } catch (e) {
                 console.error('Error creating sky chart:', e);
             }
